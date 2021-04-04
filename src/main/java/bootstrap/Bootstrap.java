@@ -1,9 +1,10 @@
 package bootstrap;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+
+import handlerFactory.HandlerFactory;
 
 public class Bootstrap {
 	public static void main(String[] args) {
@@ -14,10 +15,18 @@ public class Bootstrap {
 		Server server = new Server(threadPool);
 
 		// Create a ServerConnector to accept connections from clients.
-		Connector connector = new ServerConnector(server);
+		ServerConnector connector = new ServerConnector(server);
+		connector.setPort(13579);
+		
 
 		// Add the Connector to the Server
 		server.addConnector(connector);
-
+		HandlerFactory handlerFactory = new HandlerFactory();
+		handlerFactory.setResource(server);
+		try {
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

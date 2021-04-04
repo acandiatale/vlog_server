@@ -4,17 +4,19 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
 
 import servletManager.TestServlet;
 
 public class HandlerFactory {
-	private static File resourceFile = new File("/dist");
+	private File resourceFile = new File("dist/");
 	
-	public void setResource() {
+	public void setResource(Server server) {
 		URI uri = URI.create(resourceFile.toURI().toASCIIString().replace("/index.html$", "/"));
 		if(uri == null) {
 			System.out.println("uri resource loading fail!! resource file not found");
@@ -22,7 +24,7 @@ public class HandlerFactory {
 		}
 		System.out.println("resource URI : " + uri.toString());
 		
-		HandlerList handlerList = new HandlerList();
+//		HandlerList handlerList = new HandlerList();
 		
 //		RewriteHandler rewrite = new RewriteHandler();
 //		rewrite.setRewriteRequestURI(true);
@@ -32,19 +34,17 @@ public class HandlerFactory {
 //		RewriteRegexRule rule = new RewriteRegexRule();
 //		rewrite.addRule(rule);
 		
-		ContextHandlerCollection contexts = new ContextHandlerCollection();
-		handlerList.addHandler(contexts);
-		
-		ServletContextHandler servletHandler = new ServletContextHandler();
-		servletHandler.setContextPath("/");
-		servletHandler.setWelcomeFiles(new String[] {"index.html"});
+		ResourceHandler handler = new ResourceHandler();
 		try {
-			servletHandler.setBaseResource(Resource.newResource(uri));
+			handler.setBaseResource(Resource.newResource(uri));
+			handler.setDirectoriesListed(false);
+			handler.setWelcomeFiles(new String[] {"index.html"});
+			handler.setAcceptRanges(true);
+			server.setHandler(handler);
 		} catch (MalformedURLException e) {
-			System.out.println("faile to set resourceBase");
 			e.printStackTrace();
 		}
-		servletHandler.addServlet(TestServlet.class, "/test");
-		
 	}
+	
+	
 }

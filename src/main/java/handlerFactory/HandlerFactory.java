@@ -4,6 +4,9 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 
+import org.eclipse.jetty.rewrite.handler.CompactPathRule;
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -24,15 +27,15 @@ public class HandlerFactory {
 		}
 		System.out.println("resource URI : " + uri.toString());
 		
-//		HandlerList handlerList = new HandlerList();
+		HandlerList handlerList = new HandlerList();
 		
-//		RewriteHandler rewrite = new RewriteHandler();
-//		rewrite.setRewriteRequestURI(true);
-//		rewrite.setRewritePathInfo(false);
-//		rewrite.setOriginalPathAttribute("requestedPath");
-//
-//		RewriteRegexRule rule = new RewriteRegexRule();
-//		rewrite.addRule(rule);
+		RewriteHandler rewrite = new RewriteHandler();
+		rewrite.addRule(new CompactPathRule());
+		rewrite.addRule(new RewriteRegexRule("(\\/.*)", "/index.html"));
+//		rewrite.addRule();
+		
+		ContextHandlerCollection contextCollection = new ContextHandlerCollection();
+		rewrite.setHandler(contextCollection);
 		
 		ResourceHandler handler = new ResourceHandler();
 		try {
@@ -40,7 +43,9 @@ public class HandlerFactory {
 			handler.setDirectoriesListed(false);
 			handler.setWelcomeFiles(new String[] {"index.html"});
 			handler.setAcceptRanges(true);
-			server.setHandler(handler);
+			handlerList.addHandler(handler);
+			contextCollection.addHandler(handlerList);
+			server.setHandler(rewrite);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

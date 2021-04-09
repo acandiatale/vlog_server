@@ -13,26 +13,33 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import servletManager.TestServlet;
 
 public class HandlerFactory {
 	private File resourceFile = new File("dist/");
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	public void setResource(Server server) {
 		URI uri = URI.create(resourceFile.toURI().toASCIIString().replace("/index.html$", "/"));
+		
 		if(uri == null) {
-			System.out.println("uri resource loading fail!! resource file not found");
+			System.out.println("URIResource loading fail!! dist directory not founded");
+			logger.info("URIResource loading fail!! dist directory not founded");
 			System.exit(1);
 		}
+		
+		logger.info("resource URI : " + uri.toString());
 		System.out.println("resource URI : " + uri.toString());
 		
 		HandlerList handlerList = new HandlerList();
 		
 		RewriteHandler rewrite = new RewriteHandler();
+		
 		rewrite.addRule(new CompactPathRule());
 		rewrite.addRule(new RewriteRegexRule("(\\/.*)", "/index.html"));
-//		rewrite.addRule();
 		
 		ContextHandlerCollection contextCollection = new ContextHandlerCollection();
 		rewrite.setHandler(contextCollection);

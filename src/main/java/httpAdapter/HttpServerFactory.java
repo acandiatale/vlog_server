@@ -4,13 +4,16 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import handlerFactory.HandlerFactory;
 
 public class HttpServerFactory {
-
+	private final Logger logger = LoggerFactory.getLogger(getClass());
+	
 	public void init() {
-		System.out.println("==============INITIALIZING HTTPSERVER==============");
+		logger.info("============================= INITIALIZING SERVER =============================");
 		QueuedThreadPool threadPool = new QueuedThreadPool();
 		threadPool.setName("server");
 
@@ -20,15 +23,17 @@ public class HttpServerFactory {
 		// Create a ServerConnector to accept connections from clients.
 		ServerConnector connector = new ServerConnector(server);
 		connector.setPort(13579);
-		System.out.println("SERVER PORT : 13579");
+		
 
 		// Add the Connector to the Server
 		server.addConnector(connector);
-		HandlerFactory handlerFactory = new HandlerFactory();
 		
+		logger.info("Init HTTP_SERVER HandlerFactory");
+		HandlerFactory handlerFactory = new HandlerFactory();
 		handlerFactory.setResource(server);
 		try {
 			server.start();
+			logger.info("============================= SERVER START SUCCESSFULLY =============================");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

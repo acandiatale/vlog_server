@@ -1,13 +1,29 @@
 package bootstrap;
 
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import handlerFactory.HandlerFactory;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class Bootstrap {
 	public static void main(String[] args) {
-		
+		HikariConfig config = new HikariConfig("repository/DBConnection.properties");
+		HikariDataSource ds = new HikariDataSource(config);
+		try {
+			Connection conn = ds.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM admin");
+			ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String fin = rs.getString("id");
+				System.out.println(fin);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

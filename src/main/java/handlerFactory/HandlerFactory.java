@@ -19,10 +19,18 @@ import org.slf4j.LoggerFactory;
 import servletManager.TestServlet;
 
 public class HandlerFactory {
-	private File resourceFile = new File("dist/");
+	private File resourceFile;
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
-	public void setResource(Server server) {
+	public HandlerFactory() {
+		this(System.getProperty("ResourcePath", "dist/"));
+	}
+	
+	public HandlerFactory(String resourcePath) {
+		resourceFile = new File("dist/");
+	}
+	
+	public void setHandlers(Server server) {
 		URI uri = URI.create(resourceFile.toURI().toASCIIString().replace("/index.html$", "/"));
 		
 		if(uri == null) {

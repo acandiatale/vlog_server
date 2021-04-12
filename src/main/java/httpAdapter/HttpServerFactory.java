@@ -1,6 +1,5 @@
 package httpAdapter;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -30,7 +29,7 @@ public class HttpServerFactory {
 		
 		logger.info("Init HTTP_SERVER HandlerFactory");
 		HandlerFactory handlerFactory = new HandlerFactory();
-		handlerFactory.setResource(server);
+		handlerFactory.setHandlers(server);
 		try {
 			server.start();
 			logger.info("============================= SERVER START SUCCESSFULLY =============================");

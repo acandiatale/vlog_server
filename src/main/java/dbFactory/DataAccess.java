@@ -35,7 +35,7 @@ public class DataAccess {
 		private HikariDataSource ds;
 		
 		public void initializingDataSource() {
-			config = new HikariConfig("repository/DBConnection.properties");
+			config = new HikariConfig(System.getProperty("DBConnection"));
 			ds = new HikariDataSource(config);
 		}
 		

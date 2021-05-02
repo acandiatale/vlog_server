@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class PostHandler extends HttpServlet {
+public class PostServlet extends HttpServlet {
 
 	/**
 	 * 

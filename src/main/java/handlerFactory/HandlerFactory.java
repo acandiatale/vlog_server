@@ -15,7 +15,6 @@ import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.resource.Resource;
@@ -24,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import jakarta.servlet.DispatcherType;
 import servletManager.ErrorPageServlet;
-import servletManager.PostHandler;
+import servletManager.PostServlet;
 
 public class HandlerFactory {
 	private File resourceFile;
@@ -69,34 +68,36 @@ public class HandlerFactory {
 			context.setWelcomeFiles(new String[] {"index.html"});
 			context.setBaseResource(Resource.newResource(uri));
 			
-			context.addServlet(PostHandler.class, "/post/test");
-			context.addServlet(ErrorPageServlet.class, "/error");
-			
-			FilterHolder filterHolder = context.addFilter(CrossOriginFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-			filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-			filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
-			filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET");
-			filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type");
-			filterHolder.setAsyncSupported(true);
-			
-			ErrorPageErrorHandler errorMapper = new ErrorPageErrorHandler();
-			errorMapper.addErrorPage(404, "/error");
-			context.setErrorHandler(errorMapper);
-			
-			rewrite.setHandler(context);
-			
-			ServletHolder defHolder = new ServletHolder("default", DefaultServlet.class);
-//			defHolder.setInitParameter("dirAllowed", "false");
-			defHolder.setAsyncSupported(true);
-//			defHolder.setInitParameter("resourceBase", "dist/");
-			context.addServlet(defHolder, "/");
-			
-			DefaultHandler def = new DefaultHandler();
-			handlerList.setHandlers(new Handler[] {rewrite, def});
-			server.setHandler(handlerList);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
+		
+		context.addServlet(PostServlet.class, "/post/test");
+		context.addServlet(ErrorPageServlet.class, "/error");
+		
+		FilterHolder filterHolder = context.addFilter(CrossOriginFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+		filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
+		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET");
+		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_HEADERS_PARAM, "Content-Type");
+		
+		filterHolder.setAsyncSupported(true);
+		
+		ErrorPageErrorHandler errorMapper = new ErrorPageErrorHandler();
+		errorMapper.addErrorPage(404, "/error");
+		context.setErrorHandler(errorMapper);
+		
+		rewrite.setHandler(context);
+		
+		ServletHolder defHolder = new ServletHolder("default", DefaultServlet.class);
+//		defHolder.setInitParameter("dirAllowed", "false");
+		defHolder.setAsyncSupported(true);
+//		defHolder.setInitParameter("resourceBase", "dist/");
+		context.addServlet(defHolder, "/");
+		
+		DefaultHandler def = new DefaultHandler();
+		handlerList.setHandlers(new Handler[] {rewrite, def});
+		server.setHandler(handlerList);
 	}
 	
 	

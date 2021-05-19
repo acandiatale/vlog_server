@@ -22,7 +22,9 @@ public class PropertyUtils {
 	}
 	
 	public void init() {
-		logger.info("=============================  Core Property Setting ============================= ");
+		logger.info("==================================================================================");
+		logger.info("=============================  Core Property Setting =============================");
+		logger.info("==================================================================================");
 		File file = new File("Server.properties");
 		try(FileReader reader = new FileReader(file);) {
 			Properties p = new Properties();

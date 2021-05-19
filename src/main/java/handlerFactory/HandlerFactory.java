@@ -21,8 +21,10 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import filters.CorsSigninCheckFilter;
 import jakarta.servlet.DispatcherType;
 import servletManager.ErrorPageServlet;
+import servletManager.LoginServlet;
 import servletManager.PostServlet;
 
 public class HandlerFactory {
@@ -51,15 +53,18 @@ public class HandlerFactory {
 		
 		HandlerList handlerList = new HandlerList();
 		
+//		ServletContextHandler rootContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
+//		rootContext.add
+		
 		RewriteHandler rewrite = new RewriteHandler();
 		rewrite.setRewriteRequestURI(true);		
 		rewrite.setRewritePathInfo(false);
 		rewrite.setOriginalPathAttribute("requestedPath");
 		
 //		rewrite.addRule(new CompactPathRule());
-		rewrite.addRule(new RewriteRegexRule("(\\/introduce)?(\\/vlog)?(\\/post)?(\\/error)?", "/index.html"));
+//		rewrite.addRule(new RewriteRegexRule("(\\/introduce)?(\\/vlog)?(\\/post)?(\\/error)?", "/index.html"));
 		
-//		rewrite.addRule(new RewriteRegexRule("(\\/.*)", "/index.html"));
+		rewrite.addRule(new RewriteRegexRule("\\/?\\w+", "/index.html"));
 		
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 		
@@ -74,8 +79,9 @@ public class HandlerFactory {
 		
 		context.addServlet(PostServlet.class, "/post/test");
 		context.addServlet(ErrorPageServlet.class, "/error");
+		context.addServlet(LoginServlet.class, "/jwt");
 		
-		FilterHolder filterHolder = context.addFilter(CrossOriginFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+		FilterHolder filterHolder = context.addFilter(CorsSigninCheckFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 		filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
 		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_METHODS_PARAM, "GET");

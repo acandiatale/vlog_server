@@ -14,7 +14,9 @@ public class DataAccess {
 	private HikariDataSource dataSource;
 	
 	public void init() {
-		logger.info("============================= INITIALIZING DATA_ACCESS =============================");
+		logger.info("==================================================================================");
+		logger.info("============================ INITIALIZING DATA_ACCESS ============================");
+		logger.info("==================================================================================");
 		DataSourceManager manager = new DataSourceManager();
 		manager.initializingDataSource();
 		dataSource = manager.getDataSource();

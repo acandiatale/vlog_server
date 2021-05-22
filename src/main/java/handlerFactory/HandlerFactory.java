@@ -5,11 +5,15 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.EnumSet;
 
+import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.rewrite.handler.RedirectRegexRule;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.DefaultHandler;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ErrorPageErrorHandler;
@@ -53,21 +57,16 @@ public class HandlerFactory {
 		
 		HandlerList handlerList = new HandlerList();
 		
-//		ServletContextHandler rootContext = new ServletContextHandler(ServletContextHandler.SESSIONS);
-//		rootContext.add
-		
 		RewriteHandler rewrite = new RewriteHandler();
 		rewrite.setRewriteRequestURI(true);		
 		rewrite.setRewritePathInfo(false);
 		rewrite.setOriginalPathAttribute("requestedPath");
 		
 //		rewrite.addRule(new CompactPathRule());
-//		rewrite.addRule(new RewriteRegexRule("(\\/introduce)?(\\/vlog)?(\\/post)?(\\/error)?", "/index.html"));
 		
-		rewrite.addRule(new RewriteRegexRule("\\/?\\w+", "/index.html"));
+		rewrite.addRule(new RewriteRegexRule("((\\/?\\w+)\\/?)+", "/index.html"));
 		
 		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		
 		try {
 			context.setContextPath("/");
 			context.setWelcomeFiles(new String[] {"index.html"});
@@ -77,9 +76,9 @@ public class HandlerFactory {
 			e.printStackTrace();
 		}
 		
-		context.addServlet(PostServlet.class, "/post/test");
-		context.addServlet(ErrorPageServlet.class, "/error");
+		context.addServlet(PostServlet.class, "/test");
 		context.addServlet(LoginServlet.class, "/jwt");
+		context.addServlet(ErrorPageServlet.class, "/error");
 		
 		FilterHolder filterHolder = context.addFilter(CorsSigninCheckFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
@@ -92,7 +91,6 @@ public class HandlerFactory {
 		ErrorPageErrorHandler errorMapper = new ErrorPageErrorHandler();
 		errorMapper.addErrorPage(404, "/error");
 		context.setErrorHandler(errorMapper);
-		
 		rewrite.setHandler(context);
 		
 		ServletHolder defHolder = new ServletHolder("default", DefaultServlet.class);
@@ -102,7 +100,7 @@ public class HandlerFactory {
 		context.addServlet(defHolder, "/");
 		
 		DefaultHandler def = new DefaultHandler();
-		handlerList.setHandlers(new Handler[] {rewrite, def});
+		handlerList.setHandlers(new Handler[] {rewrite});
 		server.setHandler(handlerList);
 	}
 	

@@ -76,8 +76,6 @@ public class HandlerFactory {
 			e.printStackTrace();
 		}
 		
-		context.addServlet(PostServlet.class, "/test");
-		context.addServlet(LoginServlet.class, "/jwt");
 		context.addServlet(ErrorPageServlet.class, "/error");
 		
 		FilterHolder filterHolder = context.addFilter(CorsSigninCheckFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));

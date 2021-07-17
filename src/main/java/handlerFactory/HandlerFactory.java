@@ -40,7 +40,7 @@ public class HandlerFactory {
 	}
 	
 	public HandlerFactory(String resourcePath) {
-		resourceFile = new File("dist/");
+		resourceFile = new File(resourcePath);
 	}
 	
 	public void setHandlers(Server server) {
@@ -75,10 +75,6 @@ public class HandlerFactory {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		
-		context.addServlet(PostServlet.class, "/test");
-		context.addServlet(LoginServlet.class, "/jwt");
-		context.addServlet(ErrorPageServlet.class, "/error");
 		
 		FilterHolder filterHolder = context.addFilter(CorsSigninCheckFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");

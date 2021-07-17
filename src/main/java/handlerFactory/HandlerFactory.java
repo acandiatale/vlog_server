@@ -76,6 +76,11 @@ public class HandlerFactory {
 			e.printStackTrace();
 		}
 		
+<<<<<<< HEAD
+=======
+		context.addServlet(ErrorPageServlet.class, "/error");
+		
+>>>>>>> 8b84e0bac663f719300a0ec552f7513a5f1ccc5a
 		FilterHolder filterHolder = context.addFilter(CorsSigninCheckFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 		filterHolder.setInitParameter(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
 		filterHolder.setInitParameter(CrossOriginFilter.ACCESS_CONTROL_ALLOW_ORIGIN_HEADER, "*");
